@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Director Portal — Talimus Sunnah Hafizia Madrasha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<!-- SheetJS for Excel export -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+/* ── Design Tokens ─────────────────────────────────────── */
+:root {
+  --green-deep:   #1B4332;
+  --green-mid:    #2D6A4F;
+  --green-light:  #40916C;
+  --green-pale:   #B7E4C7;
+  --green-bg:     #D8F3DC;
+  --cream:        #FAFAF7;
+  --white:        #FFFFFF;
+  --ink:          #1A1A1A;
+  --ink-muted:    #4A5568;
+  --ink-faint:    #A0AEC0;
+  --danger:       #C53030;
+  --danger-bg:    #FFF5F5;
+  --warning:      #D69E2E;
+  --border:       #E2E8F0;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,.08);
+  --shadow-md:    0 4px 16px rgba(27,67,50,.12);
+  --shadow-lg:    0 8px 32px rgba(27,67,50,.18);
+  --radius:       10px;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── Geometric tile motif (SVG data URI) ──────────────── */
+.tile-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30 Z' fill='none' stroke='%232D6A4F' stroke-width='.5' opacity='.15'/%3E%3Ccircle cx='30' cy='30' r='6' fill='none' stroke='%232D6A4F' stroke-width='.5' opacity='.12'/%3E%3C/svg%3E");
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOGIN SCREEN
+══════════════════════════════════════════════════════════ */
+#loginScreen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(145deg, var(--green-deep) 0%, var(--green-mid) 100%);
+  padding: 24px;
+}
+#loginScreen.tile-bg { }
+
+.login-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 48px 40px 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Geometric corner accent — the signature element */
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 120px; height: 120px;
+  background: var(--green-pale);
+  transform: rotate(45deg);
+  opacity: .45;
+  border-radius: 8px;
+}
+.login-card::after {
+  content: '';
+  position: absolute;
+  bottom: -30px; left: -30px;
+  width: 90px; height: 90px;
+  background: var(--green-bg);
+  transform: rotate(45deg);
+  opacity: .35;
+  border-radius: 6px;
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.login-logo .arabic-mark {
+  font-size: 28px;
+  line-height: 1;
+  color: var(--green-mid);
+  margin-bottom: 8px;
+}
+.login-logo h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: var(--green-deep);
+  line-height: 1.3;
+}
+.login-logo p {
+  font-size: 12px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.form-group { margin-bottom: 18px; }
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.form-group input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--cream);
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+}
+.form-group input:focus {
+  border-color: var(--green-mid);
+  box-shadow: 0 0 0 3px rgba(45,106,79,.15);
+  background: var(--white);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 20px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:active { transform: scale(.97); }
+
+.btn-primary {
+  background: var(--green-mid);
+  color: var(--white);
+  width: 100%;
+  padding: 13px;
+  font-size: 15px;
+  letter-spacing: .02em;
+  box-shadow: 0 2px 8px rgba(45,106,79,.35);
+}
+.btn-primary:hover { background: var(--green-deep); }
+.btn-primary:disabled { background: var(--ink-faint); cursor: not-allowed; box-shadow: none; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--green-mid);
+  border: 1.5px solid var(--green-mid);
+}
+.btn-outline:hover { background: var(--green-bg); }
+
+.btn-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1.5px solid #FED7D7;
+}
+.btn-danger:hover { background: #FED7D7; }
+
+.btn-sm { padding: 7px 14px; font-size: 13px; }
+.btn-icon { padding: 8px; border-radius: 8px; }
+
+.error-msg {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid #FEB2B2;
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-top: 12px;
+  display: none;
+}
+.error-msg.show { display: block; }
+
+/* ══════════════════════════════════════════════════════════
+   DASHBOARD LAYOUT
+══════════════════════════════════════════════════════════ */
+#dashboard { display: none; min-height: 100vh; flex-direction: column; }
+#dashboard.active { display: flex; }
+
+/* ── Top Nav ── */
+.topnav {
+  background: var(--green-deep);
+  color: var(--white);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topnav-brand {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  flex: 1;
+}
+.topnav-brand span { color: var(--green-pale); }
+.topnav-meta { font-size: 12px; color: rgba(255,255,255,.6); }
+.btn-logout {
+  background: rgba(255,255,255,.12);
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,.2);
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s;
+  font-family: var(--font-body);
+}
+.btn-logout:hover { background: rgba(255,255,255,.22); }
+
+/* ── Main Content ── */
+.main { flex: 1; padding: 28px 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+
+/* ── Stats Bar ── */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  border-left: 3px solid var(--green-light);
+  box-shadow: var(--shadow-sm);
+}
+.stat-card .stat-val {
+  font-family: var(--font-display);
+  font-size: 26px;
+  color: var(--green-deep);
+  line-height: 1;
+}
+.stat-card .stat-label {
+  font-size: 11px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-top: 4px;
+}
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+.toolbar-left { display: flex; gap: 10px; flex: 1; flex-wrap: wrap; }
+.toolbar-right { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 11px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--ink-faint);
+  pointer-events: none;
+}
+.search-wrap input {
+  width: 100%;
+  padding: 9px 12px 9px 34px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  background: var(--white);
+  transition: border-color .15s;
+}
+.search-wrap input:focus { border-color: var(--green-mid); }
+
+.filter-select {
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: var(--white);
+  color: var(--ink);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.filter-select:focus { border-color: var(--green-mid); }
+
+/* ── Table ── */
+.table-wrap {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.table-wrap thead th {
+  background: var(--green-deep);
+  color: var(--white);
+  padding: 11px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.table-wrap thead th:first-child { border-radius: 0; }
+
+.table-wrap tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background .1s;
+}
+.table-wrap tbody tr:last-child { border-bottom: none; }
+.table-wrap tbody tr:hover { background: var(--green-bg); }
+
+.table-wrap tbody td {
+  padding: 10px 14px;
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-class {
+  background: rgba(45,106,79,.12);
+  color: var(--green-deep);
+}
+
+.action-btns { display: flex; gap: 6px; }
+
+.wa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #25D366;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 13px;
+}
+.wa-link:hover { text-decoration: underline; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ink-muted);
+}
+.empty-state svg { margin-bottom: 12px; color: var(--ink-faint); }
+.empty-state p { font-size: 15px; }
+.empty-state small { font-size: 13px; color: var(--ink-faint); }
+
+/* ── Pagination ── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--ink-muted);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.page-btns { display: flex; gap: 4px; }
+.page-btn {
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--white);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-body);
+  transition: background .1s, border-color .1s;
+}
+.page-btn:hover { background: var(--green-bg); border-color: var(--green-light); }
+.page-btn.active { background: var(--green-mid); color: var(--white); border-color: var(--green-mid); }
+.page-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ══════════════════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(3px);
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--white);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 620px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn .2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h2 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--green-deep);
+}
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--ink-muted);
+  padding: 0 4px;
+  line-height: 1;
+}
+.modal-close:hover { color: var(--danger); }
+
+.modal-body { padding: 20px 24px; }
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+}
+
+/* Form grid inside modal */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.form-grid .full { grid-column: 1 / -1; }
+
+.modal .form-group { margin-bottom: 0; }
+.modal .form-group input,
+.modal .form-group select,
+.modal .form-group textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--cream);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.modal .form-group input:focus,
+.modal .form-group select:focus,
+.modal .form-group textarea:focus {
+  border-color: var(--green-mid);
+  box-shadow: 0 0 0 3px rgba(45,106,79,.1);
+  background: var(--white);
+}
+.modal .form-group textarea { resize: vertical; min-height: 70px; }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--green-mid);
+  border-bottom: 1px solid var(--green-pale);
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+  margin-top: 4px;
+}
+
+/* ── View Modal ── */
+.view-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 20px;
+}
+.view-field { padding: 6px 0; }
+.view-field .vf-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.view-field .vf-val {
+  font-size: 14px;
+  color: var(--ink);
+  margin-top: 2px;
+}
+.view-field.full { grid-column: 1 / -1; }
+
+/* ── Delete confirm modal ── */
+.confirm-modal { max-width: 400px; }
+.confirm-body { padding: 24px; text-align: center; }
+.confirm-body .confirm-icon { font-size: 40px; margin-bottom: 12px; }
+.confirm-body p { color: var(--ink-muted); font-size: 14px; line-height: 1.5; }
+.confirm-body strong { color: var(--ink); }
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--green-deep);
+  color: var(--white);
+  padding: 12px 18px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  z-index: 999;
+  transform: translateY(80px);
+  opacity: 0;
+  transition: transform .25s ease, opacity .25s ease;
+  max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.error { background: var(--danger); }
+
+/* ── Loading overlay ── */
+.loading-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(255,255,255,.75);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+}
+.loading-overlay.show { display: flex; }
+.spinner {
+  width: 38px; height: 38px;
+  border: 3px solid var(--green-pale);
+  border-top-color: var(--green-mid);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .main { padding: 16px; }
+  .topnav { padding: 0 14px; }
+  .topnav-brand { font-size: 14px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .view-grid  { grid-template-columns: 1fr; }
+  .view-field.full { grid-column: 1; }
+  .table-wrap { overflow-x: auto; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .toolbar-left, .toolbar-right { width: 100%; }
+  .search-wrap { max-width: 100%; }
+  .login-card { padding: 36px 22px 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════════════════ -->
+<div id="loginScreen" class="tile-bg">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="arabic-mark">☽✦</div>
+      <h1>Talimus Sunnah Hafizia<br>Madrasha</h1>
+      <p>Director Portal</p>
+    </div>
+
+    <div class="form-group">
+      <label for="loginUser">Username</label>
+      <input type="text" id="loginUser" placeholder="Enter username" autocomplete="username"/>
+    </div>
+    <div class="form-group">
+      <label for="loginPin">PIN</label>
+      <input type="password" id="loginPin" placeholder="Enter PIN" autocomplete="current-password"
+             inputmode="numeric"/>
+    </div>
+
+    <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">Sign in</button>
+    <div class="error-msg" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════════════════════ -->
+<div id="dashboard">
+  <nav class="topnav">
+    <div class="topnav-brand"><span>✦</span> Director Portal</div>
+    <div class="topnav-meta" id="navDate"></div>
+    <button class="btn-logout" onclick="doLogout()">Sign out</button>
+  </nav>
+
+  <div class="main">
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-val" id="statTotal">—</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statClasses">—</div>
+        <div class="stat-label">Classes</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statToday">—</div>
+        <div class="stat-label">Enrolled This Year</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search name, class, roll…" oninput="applyFilters()"/>
+        </div>
+        <select class="filter-select" id="classFilter" onchange="applyFilters()">
+          <option value="">All Classes</option>
+        </select>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-outline btn-sm" onclick="exportExcel()">⬇ Excel</button>
+        <button class="btn btn-outline btn-sm" onclick="exportPDF()">⬇ PDF</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Add Student</button>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table id="studentsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Roll</th>
+            <th>Phone</th>
+            <th>WhatsApp</th>
+            <th>Guardian</th>
+            <th>G. Phone</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="9"><div class="empty-state"><p>Loading…</p></div></td></tr>
+        </tbody>
+      </table>
+      <div class="pagination" id="paginationBar">
+        <span id="pageInfo"></span>
+        <div class="page-btns" id="pageBtns"></div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /dashboard -->
+
+<!-- ══════════════════════════════════════════════════════════
+     ADD / EDIT MODAL
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="formModalTitle">Add Student</h2>
+      <button class="modal-close" onclick="closeFormModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fId"/>
+
+      <div class="section-label">Student Information</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="fName" placeholder="Student full name"/>
+        </div>
+        <div class="form-group">
+          <label>Class *</label>
+          <input type="text" id="fClass" placeholder="e.g. Hifz 3"/>
+        </div>
+        <div class="form-group">
+          <label>Roll Number</label>
+          <input type="text" id="fRoll" placeholder="Roll no."/>
+        </div>
+        <div class="form-group">
+          <label>Date of Birth</label>
+          <input type="date" id="fDOB"/>
+        </div>
+        <div class="form-group">
+          <label>Student Phone</label>
+          <input type="tel" id="fPhone" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group">
+          <label>Student WhatsApp</label>
+          <input type="tel" id="fWhatsApp" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group full">
+          <label>Address</label>
+          <input type="text" id="fAddress" placeholder="Village / Upazila / District"/>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:20px">Guardian Information</div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Guardian Name</label>
+          <input type="text" id="fGuardianName" placeholder="Father / Mother / Guardian name"/>
+        </div>
+        <div class="form-group">
+          <label>Guardian Phone</label>
+          <input type="tel" id="fGuardianPhone" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group">
+          <label>Guardian WhatsApp</label>
+          <input type="tel" id="fGuardianWhatsApp" placeholder="01XXXXXXXXX"/>
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea id="fNotes" placeholder="Any additional notes…"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeFormModal()">Cancel</button>
+      <button class="btn btn-primary" id="formSaveBtn" onclick="saveStudent()">Save Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     VIEW MODAL
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="viewModalTitle">Student Details</h2>
+      <button class="modal-close" onclick="closeViewModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-label">Student Information</div>
+      <div class="view-grid">
+        <div class="view-field"><div class="vf-label">Full Name</div><div class="vf-val" id="vName">—</div></div>
+        <div class="view-field"><div class="vf-label">Class</div><div class="vf-val" id="vClass">—</div></div>
+        <div class="view-field"><div class="vf-label">Roll</div><div class="vf-val" id="vRoll">—</div></div>
+        <div class="view-field"><div class="vf-label">Date of Birth</div><div class="vf-val" id="vDOB">—</div></div>
+        <div class="view-field"><div class="vf-label">Phone</div><div class="vf-val" id="vPhone">—</div></div>
+        <div class="view-field"><div class="vf-label">WhatsApp</div><div class="vf-val" id="vWhatsApp">—</div></div>
+        <div class="view-field full"><div class="vf-label">Address</div><div class="vf-val" id="vAddress">—</div></div>
+      </div>
+      <div class="section-label" style="margin-top:18px">Guardian Information</div>
+      <div class="view-grid">
+        <div class="view-field full"><div class="vf-label">Guardian Name</div><div class="vf-val" id="vGuardianName">—</div></div>
+        <div class="view-field"><div class="vf-label">Guardian Phone</div><div class="vf-val" id="vGuardianPhone">—</div></div>
+        <div class="view-field"><div class="vf-label">Guardian WhatsApp</div><div class="vf-val" id="vGuardianWhatsApp">—</div></div>
+      </div>
+      <div class="section-label" style="margin-top:18px">Other</div>
+      <div class="view-grid">
+        <div class="view-field"><div class="vf-label">Enrolled Date</div><div class="vf-val" id="vEnrolled">—</div></div>
+        <div class="view-field"><div class="vf-label">Student ID</div><div class="vf-val" id="vId">—</div></div>
+        <div class="view-field full"><div class="vf-label">Notes</div><div class="vf-val" id="vNotes">—</div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeViewModal()">Close</button>
+      <button class="btn btn-primary" id="viewEditBtn">Edit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     DELETE CONFIRM MODAL
+══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal confirm-modal">
+    <div class="modal-header">
+      <h2>Confirm Delete</h2>
+      <button class="modal-close" onclick="closeDeleteModal()">×</button>
+    </div>
+    <div class="confirm-body">
+      <div class="confirm-icon">🗑️</div>
+      <p>Are you sure you want to remove<br><strong id="deleteStudentName"></strong> from the system?<br><small style="color:var(--ink-faint)">This action cannot be undone.</small></p>
+    </div>
+    <div class="modal-footer" style="justify-content:center; gap:14px;">
+      <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast & Loader -->
+<div class="toast" id="toast"></div>
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+  <div style="font-size:14px;color:var(--green-mid);font-weight:500">Please wait…</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════════ -->
+<script>
+// ── CONFIG — paste your deployed Apps Script URL here ──────
+const API_URL = "https://script.google.com/macros/s/AKfycbyyxgXyU1OGaVyY3ZBhGKfNsixCMnpKSPH_HGjH3rKyvyhlTtlJeCLMucM4t5rcic1unw/exec";
+const PAGE_SIZE = 15;
+
+// ── State ──────────────────────────────────────────────────
+let token       = localStorage.getItem("dirToken") || "";
+let allStudents = [];
+let filtered    = [];
+let currentPage = 1;
+let pendingDeleteId = null;
+
+// ── Boot ───────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("navDate").textContent =
+    new Date().toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+  document.getElementById("loginPin").addEventListener("keydown", e => {
+    if (e.key === "Enter") doLogin();
+  });
+  document.getElementById("loginUser").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("loginPin").focus();
+  });
+
+  if (token) {
+    showDashboard();
+    loadStudents();
+  }
+});
+
+// ── API helper ─────────────────────────────────────────────
+async function api(action, extra = {}) {
+  const res  = await fetch(API_URL, {
+    method : "POST",
+    headers: { "Content-Type": "application/json" },
+    body   : JSON.stringify({ action, token, ...extra })
+  });
+  return res.json();
+}
+
+// ── Auth ───────────────────────────────────────────────────
+async function doLogin() {
+  const username = document.getElementById("loginUser").value.trim();
+  const pin      = document.getElementById("loginPin").value.trim();
+  const errEl    = document.getElementById("loginError");
+  const btn      = document.getElementById("loginBtn");
+
+  if (!username || !pin) { showError("Please enter username and PIN."); return; }
+
+  btn.disabled = true;
+  btn.textContent = "Signing in…";
+  errEl.classList.remove("show");
+
+  try {
+    const data = await fetch(API_URL, {
+      method : "POST",
+      headers: { "Content-Type": "application/json" },
+      body   : JSON.stringify({ action: "login", username, pin })
+    }).then(r => r.json());
+
+    if (data.success) {
+      token = data.token;
+      localStorage.setItem("dirToken", token);
+      showDashboard();
+      loadStudents();
+    } else {
+      showError(data.error || "Login failed. Check your credentials.");
+    }
+  } catch (e) {
+    showError("Could not reach server. Check your internet connection.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Sign in";
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById("loginError");
+  el.textContent = msg;
+  el.classList.add("show");
+}
+
+async function doLogout() {
+  try { await api("logout"); } catch(e) {}
+  token = "";
+  localStorage.removeItem("dirToken");
+  document.getElementById("dashboard").classList.remove("active");
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("loginPin").value = "";
+}
+
+function showDashboard() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("dashboard").classList.add("active");
+}
+
+// ── Load Students ──────────────────────────────────────────
+async function loadStudents() {
+  showLoader(true);
+  try {
+    const data = await api("getStudents");
+    if (!data.success) { handleUnauth(data); return; }
+    allStudents = data.students;
+    buildClassFilter();
+    applyFilters();
+    updateStats();
+  } catch(e) {
+    showToast("Failed to load students.", "error");
+  } finally {
+    showLoader(false);
+  }
+}
+
+function updateStats() {
+  document.getElementById("statTotal").textContent = allStudents.length;
+  const classes = new Set(allStudents.map(s => s.Class).filter(Boolean));
+  document.getElementById("statClasses").textContent = classes.size;
+  const thisYear = new Date().getFullYear().toString();
+  const enrolled = allStudents.filter(s => (s.EnrolledDate||"").startsWith(thisYear)).length;
+  document.getElementById("statToday").textContent = enrolled;
+}
+
+function buildClassFilter() {
+  const sel = document.getElementById("classFilter");
+  const cur = sel.value;
+  const classes = [...new Set(allStudents.map(s => s.Class).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">All Classes</option>';
+  classes.forEach(c => {
+    const o = document.createElement("option");
+    o.value = c; o.textContent = c;
+    if (c === cur) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+// ── Filter & Render ────────────────────────────────────────
+function applyFilters() {
+  const q   = document.getElementById("searchInput").value.toLowerCase();
+  const cls = document.getElementById("classFilter").value;
+  filtered = allStudents.filter(s => {
+    const matchQ = !q ||
+      (s.Name||"").toLowerCase().includes(q) ||
+      (s.Roll||"").toLowerCase().includes(q) ||
+      (s.Class||"").toLowerCase().includes(q) ||
+      (s.Phone||"").includes(q) ||
+      (s.GuardianName||"").toLowerCase().includes(q);
+    const matchC = !cls || s.Class === cls;
+    return matchQ && matchC;
+  });
+  currentPage = 1;
+  renderTable();
+}
+
+function renderTable() {
+  const tbody = document.getElementById("tableBody");
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page  = filtered.slice(start, start + PAGE_SIZE);
+
+  if (!page.length) {
+    tbody.innerHTML = `<tr><td colspan="9">
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        <p>No students found</p>
+        <small>Try a different search or add a new student.</small>
+      </div>
+    </td></tr>`;
+    updatePagination();
+    return;
+  }
+
+  tbody.innerHTML = page.map((s, i) => `
+    <tr>
+      <td style="color:var(--ink-faint);font-size:12px">${start + i + 1}</td>
+      <td><strong>${esc(s.Name)}</strong></td>
+      <td><span class="badge badge-class">${esc(s.Class)}</span></td>
+      <td>${esc(s.Roll)}</td>
+      <td><a href="tel:${esc(s.Phone)}" style="color:var(--ink);text-decoration:none">${esc(s.Phone)||'—'}</a></td>
+      <td>${s.WhatsApp
+        ? `<a class="wa-link" href="https://wa.me/880${s.WhatsApp.replace(/^0/,'')}" target="_blank">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.999 2C6.477 2 2 6.477 2 12c0 1.99.574 3.865 1.573 5.453L2 22l4.687-1.545A9.956 9.956 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.956 7.956 0 0 1-4.07-1.118l-.292-.174-3.018.997.998-2.96-.192-.305A7.956 7.956 0 0 1 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/></svg>
+            ${esc(s.WhatsApp)}
+           </a>`
+        : '—'}
+      </td>
+      <td>${esc(s.GuardianName)||'—'}</td>
+      <td>${s.GuardianPhone
+        ? `<a href="tel:${esc(s.GuardianPhone)}" style="color:var(--ink);text-decoration:none">${esc(s.GuardianPhone)}</a>`
+        : '—'}
+      </td>
+      <td>
+        <div class="action-btns">
+          <button class="btn btn-outline btn-sm btn-icon" title="View" onclick="openViewModal('${s.ID}')">👁</button>
+          <button class="btn btn-outline btn-sm btn-icon" title="Edit" onclick="openEditModal('${s.ID}')">✏️</button>
+          <button class="btn btn-danger btn-sm btn-icon" title="Delete" onclick="openDeleteModal('${s.ID}','${esc(s.Name)}')">🗑</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+
+  updatePagination();
+}
+
+function updatePagination() {
+  const total  = filtered.length;
+  const pages  = Math.ceil(total / PAGE_SIZE);
+  const start  = total ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
+  const end    = Math.min(currentPage * PAGE_SIZE, total);
+
+  document.getElementById("pageInfo").textContent =
+    total ? `Showing ${start}–${end} of ${total} students` : "No students";
+
+  const btns = document.getElementById("pageBtns");
+  if (pages <= 1) { btns.innerHTML = ""; return; }
+
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?"disabled":""}>‹</button>`;
+  for (let i = 1; i <= pages; i++) {
+    if (i===1 || i===pages || Math.abs(i-currentPage)<=1) {
+      html += `<button class="page-btn ${i===currentPage?"active":""}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i-currentPage)===2) {
+      html += `<button class="page-btn" style="pointer-events:none">…</button>`;
+    }
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===pages?"disabled":""}>›</button>`;
+  btns.innerHTML = html;
+}
+
+function goPage(n) {
+  const pages = Math.ceil(filtered.length / PAGE_SIZE);
+  if (n < 1 || n > pages) return;
+  currentPage = n;
+  renderTable();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── Add / Edit Modal ───────────────────────────────────────
+function openAddModal() {
+  document.getElementById("formModalTitle").textContent = "Add New Student";
+  document.getElementById("formSaveBtn").textContent = "Save Student";
+  clearForm();
+  document.getElementById("formModal").classList.add("open");
+}
+
+function openEditModal(id) {
+  const s = allStudents.find(x => x.ID === id);
+  if (!s) return;
+  document.getElementById("formModalTitle").textContent = "Edit Student";
+  document.getElementById("formSaveBtn").textContent = "Update Student";
+  document.getElementById("fId").value              = s.ID;
+  document.getElementById("fName").value            = s.Name || "";
+  document.getElementById("fClass").value           = s.Class || "";
+  document.getElementById("fRoll").value            = s.Roll || "";
+  document.getElementById("fDOB").value             = s.DOB || "";
+  document.getElementById("fPhone").value           = s.Phone || "";
+  document.getElementById("fWhatsApp").value        = s.WhatsApp || "";
+  document.getElementById("fAddress").value         = s.Address || "";
+  document.getElementById("fGuardianName").value    = s.GuardianName || "";
+  document.getElementById("fGuardianPhone").value   = s.GuardianPhone || "";
+  document.getElementById("fGuardianWhatsApp").value= s.GuardianWhatsApp || "";
+  document.getElementById("fNotes").value           = s.Notes || "";
+  document.getElementById("formModal").classList.add("open");
+  closeViewModal();
+}
+
+function clearForm() {
+  ["fId","fName","fClass","fRoll","fDOB","fPhone","fWhatsApp",
+   "fAddress","fGuardianName","fGuardianPhone","fGuardianWhatsApp","fNotes"]
+    .forEach(id => document.getElementById(id).value = "");
+}
+
+function closeFormModal() { document.getElementById("formModal").classList.remove("open"); }
+
+async function saveStudent() {
+  const id   = document.getElementById("fId").value;
+  const name = document.getElementById("fName").value.trim();
+  const cls  = document.getElementById("fClass").value.trim();
+  if (!name || !cls) { showToast("Name and Class are required.", "error"); return; }
+
+  const student = {
+    ID: id || undefined,
+    Name: name, Class: cls,
+    Roll:              document.getElementById("fRoll").value.trim(),
+    DOB:               document.getElementById("fDOB").value,
+    Phone:             document.getElementById("fPhone").value.trim(),
+    WhatsApp:          document.getElementById("fWhatsApp").value.trim(),
+    Address:           document.getElementById("fAddress").value.trim(),
+    GuardianName:      document.getElementById("fGuardianName").value.trim(),
+    GuardianPhone:     document.getElementById("fGuardianPhone").value.trim(),
+    GuardianWhatsApp:  document.getElementById("fGuardianWhatsApp").value.trim(),
+    Notes:             document.getElementById("fNotes").value.trim(),
+  };
+
+  showLoader(true);
+  try {
+    const action = id ? "updateStudent" : "addStudent";
+    const data   = await api(action, { student });
+    if (data.success) {
+      showToast(id ? "Student updated." : "Student added.");
+      closeFormModal();
+      await loadStudents();
+    } else {
+      showToast(data.error || "Failed to save.", "error");
+    }
+  } catch(e) {
+    showToast("Error saving student.", "error");
+  } finally {
+    showLoader(false);
+  }
+}
+
+// ── View Modal ─────────────────────────────────────────────
+function openViewModal(id) {
+  const s = allStudents.find(x => x.ID === id);
+  if (!s) return;
+  document.getElementById("viewModalTitle").textContent = s.Name || "Student Details";
+  document.getElementById("vName").textContent          = s.Name || "—";
+  document.getElementById("vClass").textContent         = s.Class || "—";
+  document.getElementById("vRoll").textContent          = s.Roll || "—";
+  document.getElementById("vDOB").textContent           = s.DOB || "—";
+  document.getElementById("vPhone").textContent         = s.Phone || "—";
+  document.getElementById("vWhatsApp").innerHTML        = s.WhatsApp
+    ? `<a class="wa-link" href="https://wa.me/880${s.WhatsApp.replace(/^0/,'')}" target="_blank">💬 ${esc(s.WhatsApp)}</a>`
+    : "—";
+  document.getElementById("vAddress").textContent       = s.Address || "—";
+  document.getElementById("vGuardianName").textContent  = s.GuardianName || "—";
+  document.getElementById("vGuardianPhone").textContent = s.GuardianPhone || "—";
+  document.getElementById("vGuardianWhatsApp").innerHTML= s.GuardianWhatsApp
+    ? `<a class="wa-link" href="https://wa.me/880${s.GuardianWhatsApp.replace(/^0/,'')}" target="_blank">💬 ${esc(s.GuardianWhatsApp)}</a>`
+    : "—";
+  document.getElementById("vEnrolled").textContent      = s.EnrolledDate || "—";
+  document.getElementById("vId").textContent            = s.ID || "—";
+  document.getElementById("vNotes").textContent         = s.Notes || "—";
+  document.getElementById("viewEditBtn").onclick        = () => openEditModal(id);
+  document.getElementById("viewModal").classList.add("open");
+}
+function closeViewModal() { document.getElementById("viewModal").classList.remove("open"); }
+
+// ── Delete Modal ───────────────────────────────────────────
+function openDeleteModal(id, name) {
+  pendingDeleteId = id;
+  document.getElementById("deleteStudentName").textContent = name;
+  document.getElementById("confirmDeleteBtn").onclick = () => confirmDelete();
+  document.getElementById("deleteModal").classList.add("open");
+}
+function closeDeleteModal() { document.getElementById("deleteModal").classList.remove("open"); pendingDeleteId = null; }
+
+async function confirmDelete() {
+  if (!pendingDeleteId) return;
+  showLoader(true);
+  try {
+    const data = await api("deleteStudent", { id: pendingDeleteId });
+    if (data.success) {
+      showToast("Student removed.");
+      closeDeleteModal();
+      await loadStudents();
+    } else {
+      showToast(data.error || "Delete failed.", "error");
+    }
+  } catch(e) {
+    showToast("Error deleting student.", "error");
+  } finally {
+    showLoader(false);
+  }
+}
+
+// ── Export Excel ───────────────────────────────────────────
+function exportExcel() {
+  const rows = filtered.map(s => ({
+    "ID"               : s.ID,
+    "Name"             : s.Name,
+    "Class"            : s.Class,
+    "Roll"             : s.Roll,
+    "DOB"              : s.DOB,
+    "Phone"            : s.Phone,
+    "WhatsApp"         : s.WhatsApp,
+    "Address"          : s.Address,
+    "Guardian Name"    : s.GuardianName,
+    "Guardian Phone"   : s.GuardianPhone,
+    "Guardian WhatsApp": s.GuardianWhatsApp,
+    "Enrolled Date"    : s.EnrolledDate,
+    "Notes"            : s.Notes,
+  }));
+  const ws  = XLSX.utils.json_to_sheet(rows);
+  const wb  = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Students");
+  XLSX.writeFile(wb, `students_${today()}.xlsx`);
+  showToast("Excel file downloaded.");
+}
+
+// ── Export PDF ─────────────────────────────────────────────
+function exportPDF() {
+  const printWin = window.open("", "_blank");
+  const rows = filtered.map((s, i) => `
+    <tr>
+      <td>${i+1}</td><td>${esc(s.Name)}</td><td>${esc(s.Class)}</td>
+      <td>${esc(s.Roll)}</td><td>${esc(s.Phone)}</td><td>${esc(s.WhatsApp)}</td>
+      <td>${esc(s.GuardianName)}</td><td>${esc(s.GuardianPhone)}</td>
+      <td>${esc(s.Address)}</td><td>${esc(s.DOB)}</td>
+    </tr>`).join("");
+
+  printWin.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8"/>
+    <title>Student List — Talimus Sunnah Hafizia Madrasha</title>
+    <style>
+      body { font-family: Arial, sans-serif; font-size: 11px; padding: 20px; }
+      h2 { color: #1B4332; margin-bottom: 4px; }
+      p  { color: #4A5568; font-size: 10px; margin-bottom: 12px; }
+      table { width: 100%; border-collapse: collapse; }
+      th { background: #1B4332; color: #fff; padding: 6px 8px; text-align: left; font-size: 10px; }
+      td { padding: 5px 8px; border-bottom: 1px solid #E2E8F0; }
+      tr:nth-child(even) { background: #f7fdf9; }
+    </style>
+  </head><body>
+    <h2>Talimus Sunnah Hafizia Madrasha</h2>
+    <p>Director Student Report — Generated: ${new Date().toLocaleString()}</p>
+    <table>
+      <thead><tr>
+        <th>#</th><th>Name</th><th>Class</th><th>Roll</th>
+        <th>Phone</th><th>WhatsApp</th><th>Guardian</th><th>G. Phone</th>
+        <th>Address</th><th>DOB</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </body></html>`);
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(() => { printWin.print(); }, 400);
+}
+
+// ── Utilities ──────────────────────────────────────────────
+function esc(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function today() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function handleUnauth(data) {
+  if (data.error === "Unauthorized") {
+    localStorage.removeItem("dirToken");
+    token = "";
+    showDashboard();
+    doLogout();
+    showToast("Session expired. Please log in again.", "error");
+  }
+}
+
+let toastTimer;
+function showToast(msg, type = "success") {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className   = `toast ${type === "error" ? "error" : ""} show`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 3200);
+}
+
+function showLoader(on) {
+  document.getElementById("loader").classList.toggle("show", on);
+}
+
+// Close modals on overlay click
+document.querySelectorAll(".modal-overlay").forEach(overlay => {
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) overlay.classList.remove("open");
+  });
+});
+</script>
+</body>
+</html>
