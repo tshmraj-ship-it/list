@@ -10,7 +10,7 @@
 
 <!-- SheetJS for Excel export -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  
+
 <style>
 /* ── Design Tokens ─────────────────────────────────────── */
 :root {
@@ -873,7 +873,7 @@ body {
 ══════════════════════════════════════════════════════════ -->
 <script>
 // ── CONFIG — paste your deployed Apps Script URL here ──────
-const API_URL = "https://script.google.com/macros/s/AKfycbxkl-HcrvqZmd8mQhHDn_3yJCLqI-q01NeOMNtYuyW9TYcq3XNDkcYSacqMFfvDYBRMiw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwi5Kzt45YnGz1Df43zYGbVEEEKquDkGnKU6PVoOUohH9gCDh4FmNMV7ZVyMYK4DamCVQ/exec";
 const PAGE_SIZE = 15;
 
 // ── State ──────────────────────────────────────────────────
@@ -965,13 +965,32 @@ async function loadStudents() {
   showLoader(true);
   try {
     const data = await api("getStudents");
-    if (!data.success) { handleUnauth(data); return; }
-    allStudents = data.students;
+    console.log("getStudents response:", JSON.stringify(data));   // debug
+
+    if (!data.success) {
+      if (data.error === "Unauthorized") { handleUnauth(data); return; }
+      showToast("Server: " + (data.error || "Unknown error"), "error");
+      // Show in table too
+      document.getElementById("tableBody").innerHTML =
+        `<tr><td colspan="9"><div class="empty-state">
+          <p style="color:var(--danger)">⚠ ${data.error || "Server error"}</p>
+          <small>Open browser Console (F12) for details.</small>
+        </div></td></tr>`;
+      return;
+    }
+
+    allStudents = data.students || [];
+    console.log("Students loaded:", allStudents.length, "debug:", data.debug);
     buildClassFilter();
     applyFilters();
     updateStats();
   } catch(e) {
-    showToast("Failed to load students.", "error");
+    console.error("loadStudents exception:", e);
+    showToast("Network error: " + e.message, "error");
+    document.getElementById("tableBody").innerHTML =
+      `<tr><td colspan="9"><div class="empty-state">
+        <p style="color:var(--danger)">⚠ Network error: ${e.message}</p>
+      </div></td></tr>`;
   } finally {
     showLoader(false);
   }
